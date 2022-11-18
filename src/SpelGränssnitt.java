@@ -280,13 +280,12 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
                 rutaSomJämförsIndex = (parseInt(rutaSomJämförs.getText()));
             } catch (ArrayIndexOutOfBoundsException e) {
             }
-            System.out.println(rutaSomKollasIndex + " " + rutaSomJämförsIndex);
             try {
                 if (rutaSomKollasIndex < rutaSomJämförsIndex) {
                     räknadRuta++;
                 }
             } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
+                System.out.println(e.getStackTrace());
             }
             if (räknadRuta == 15) {
                 for (Component comp2 : components) {
