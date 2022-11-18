@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-
 import static java.lang.Integer.parseInt;
 
 public class SpelGränssnitt extends JFrame implements ActionListener {
@@ -27,7 +26,7 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
     JButton knapp13 = new JButton("13");
     JButton knapp14 = new JButton("14");
     JButton knapp15 = new JButton("15");
-    JButton tomKnapp = new JButton("osynlig");
+    JButton tomKnapp = new JButton("16");
     JButton nyttSpelKnapp = new JButton("Nytt spel");
     JButton vinstKnapp = new JButton("Vinn");
 
@@ -90,12 +89,12 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
         knapp13.addActionListener(this);
         knapp14.addActionListener(this);
         knapp15.addActionListener(this);
+        nyttSpelPlats.add(nyttSpelKnapp);
+        nyttSpelKnapp.addActionListener(this);
         vinstKnapp.addActionListener(this);
         nyttSpelPlats.add(vinstKnapp);
         vinstKnapp.setBackground(Color.green);
         vinstKnapp.setVisible(false);
-        nyttSpelPlats.add(nyttSpelKnapp);
-        nyttSpelKnapp.addActionListener(this);
         setVisible(true);
         knappGrid.setVisible(false);
         pack();
@@ -108,28 +107,30 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == nyttSpelKnapp) {
             nyttSpelTryck();
-        } else if (e.getSource() == vinstKnapp){
-                System.out.println("EEEEEE");
+        } else if (e.getSource() == vinstKnapp) {
+            autovinst();
         } else {
             brickatryck((JButton) e.getSource());
         }
+        kollaVinst();
     }
-    public void nyttSpelTryck(){
+
+    public void nyttSpelTryck() {
         knappGrid.setVisible(true);
         vinstKnapp.setVisible(true);
         Random slumpare = new Random();
         int i = -1;
         int i2 = 0;
         Component[] components = knappGrid.getComponents();
-            knappGrid.removeAll();
-        for(Component comp :components) {
+        knappGrid.removeAll();
+        for (Component comp : components) {
             i++;
-            int randomIndexToSwap = slumpare.nextInt(components.length);
-            Component temp = components[randomIndexToSwap];
-            components[randomIndexToSwap] = components[i];
+            int slumpatIndexAttByta = slumpare.nextInt(components.length);
+            Component temp = components[slumpatIndexAttByta];
+            components[slumpatIndexAttByta] = components[i];
             components[i] = temp;
         }
-        for(Component comp :components) {
+        for (Component comp : components) {
             comp.setName(String.valueOf(i2));
             i2++;
             knappGrid.add(comp);
@@ -138,7 +139,7 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         knappGrid.validate();
         knappGrid.repaint();
-}
+    }
 
     public void brickatryck(JButton source) {
         int tomRutaPlats = 0;
@@ -166,7 +167,7 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
         Component temp = components[parseInt(source.getName())];
         for (Component comp : components) {
             JButton rutaSomKollas = (JButton) comp;
-            if (rutaSomKollas.getText().equals("osynlig")) {
+            if (rutaSomKollas.getText().equals("16")) {
                 tomRuta = comp;
                 tomRutaPlats = parseInt(comp.getName());
                 break;
@@ -189,74 +190,120 @@ public class SpelGränssnitt extends JFrame implements ActionListener {
         Component tryckbarRuta2;
         Component tryckbarRuta3;
         Component tryckbarRuta4;
-        try{
-        tryckbarRuta1 = fullGrid[tomRad - 1][tomKolumn];
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        try {
+            tryckbarRuta1 = fullGrid[tomRad - 1][tomKolumn];
+        } catch (ArrayIndexOutOfBoundsException e) {
             tryckbarRuta1 = null;
         }
-        try{
-         tryckbarRuta2 = fullGrid[tomRad + 1][tomKolumn];
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        try {
+            tryckbarRuta2 = fullGrid[tomRad + 1][tomKolumn];
+        } catch (ArrayIndexOutOfBoundsException e) {
             tryckbarRuta2 = null;
         }
-        try{
-         tryckbarRuta3 = fullGrid[tomRad ][tomKolumn-1];
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        try {
+            tryckbarRuta3 = fullGrid[tomRad][tomKolumn - 1];
+        } catch (ArrayIndexOutOfBoundsException e) {
             tryckbarRuta3 = null;
         }
-        try{
-         tryckbarRuta4 = fullGrid[tomRad][tomKolumn+1];
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        try {
+            tryckbarRuta4 = fullGrid[tomRad][tomKolumn + 1];
+        } catch (ArrayIndexOutOfBoundsException e) {
             tryckbarRuta4 = null;
         }
 
-            if (trycktRuta == tryckbarRuta1 || trycktRuta == tryckbarRuta2 ||
-                    trycktRuta == tryckbarRuta3 || trycktRuta == tryckbarRuta4) {
+        if (trycktRuta == tryckbarRuta1 || trycktRuta == tryckbarRuta2 ||
+                trycktRuta == tryckbarRuta3 || trycktRuta == tryckbarRuta4) {
 
-                components[parseInt(source.getName())] = components[tomRutaPlats];
-                components[tomRutaPlats] = temp;
+            components[parseInt(source.getName())] = components[tomRutaPlats];
+            components[tomRutaPlats] = temp;
 
-                for (Component comp : components) {
-                    knappGrid.add(comp);
-                }
-                temporärIndex = source.getName();
-                source.setName(tomKnapp.getName());
-                tomKnapp.setName(temporärIndex);
-                knappGrid.validate();
-                knappGrid.repaint();
-
-                if (knappGrid.getComponent(0) == knapp1 && knappGrid.getComponent(1) == knapp2 && knappGrid.getComponent(2) == knapp3 &&
-                        knappGrid.getComponent(3) == knapp4 && knappGrid.getComponent(4) == knapp5 && knappGrid.getComponent(5) == knapp6 &&
-                        knappGrid.getComponent(6) == knapp7 && knappGrid.getComponent(7) == knapp8 && knappGrid.getComponent(8) == knapp9 &&
-                        knappGrid.getComponent(9) == knapp10 && knappGrid.getComponent(10) == knapp11 && knappGrid.getComponent(11) == knapp12 &&
-                        knappGrid.getComponent(12) == knapp13 && knappGrid.getComponent(13) == knapp14 && knappGrid.getComponent(14) == knapp15) {
-                    JOptionPane.showMessageDialog(null, "Grattis, du vann!");
-                }
-            } else {
-                for (Component comp : components) {
-                    knappGrid.add(comp);
-                }
-                knappGrid.validate();
-                knappGrid.repaint();
+            for (Component comp : components) {
+                knappGrid.add(comp);
             }
+            temporärIndex = source.getName();
+            source.setName(tomKnapp.getName());
+            tomKnapp.setName(temporärIndex);
 
-            knappGrid.validate();
-            knappGrid.repaint();
+        } else {
+            for (Component comp : components) {
+                knappGrid.add(comp);
+            }
+        }
+        knappGrid.validate();
+        knappGrid.repaint();
     }
 
 
-        public Component[] skapaRad (Component[]components,int startpunkt){
-            Component[] rad = new Component[4];
-            for (int i = 0; i < rad.length; i++) {
-                rad[i] = components[startpunkt];
-                startpunkt++;
+    public Component[] skapaRad(Component[] components, int startpunkt) {
+        Component[] rad = new Component[4];
+        for (int i = 0; i < rad.length; i++) {
+            rad[i] = components[startpunkt];
+            startpunkt++;
+        }
+        return rad;
+    }
+
+    public void autovinst() {
+        Component[] components = knappGrid.getComponents();
+        knappGrid.removeAll();
+        int i = -1;
+        int j = 0;
+        for (Component comp : components) {
+            i++;
+            JButton brickaSomSkaBytas = (JButton) comp;
+            int nyttIndex = parseInt(brickaSomSkaBytas.getText()) - 1;
+            Component temp = components[nyttIndex];
+            components[nyttIndex] = components[i];
+            components[i] = temp;
+        }
+        for (Component comp : components) {
+            comp.setName(String.valueOf(j));
+            j++;
+            knappGrid.add(comp);
+        }
+        knappGrid.validate();
+        knappGrid.repaint();
+    }
+
+    public void kollaVinst() {
+        Component[] components = knappGrid.getComponents();
+        int räknadRuta = 0;
+        for (Component comp : components) {
+            int rutaSomKollasIndex = 0;
+            int rutaSomJämförsIndex = 0;
+            int i = 0;
+            i++;
+            try {
+                JButton rutaSomKollas = (JButton) comp;
+                rutaSomKollasIndex = parseInt(rutaSomKollas.getText());
+                JButton rutaSomJämförs = (JButton) components[parseInt(comp.getName()) + i];
+                rutaSomJämförsIndex = (parseInt(rutaSomJämförs.getText()));
+            } catch (ArrayIndexOutOfBoundsException e) {
             }
-            return rad;
+            System.out.println(rutaSomKollasIndex + " " + rutaSomJämförsIndex);
+            try {
+                if (rutaSomKollasIndex < rutaSomJämförsIndex) {
+                    räknadRuta++;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+            }
+            if (räknadRuta == 15) {
+                for (Component comp2 : components) {
+                    JButton knapp = (JButton) comp2;
+                    Färghanterare.ändraFärg(knapp);
+                    }
+                JOptionPane.showMessageDialog(null, "Grattis, du vann!");
+                break;
+            }
+            else {
+                for (Component comp2 : components) {
+                    JButton knapp = (JButton) comp2;
+                    Färgåterställare.återställFärg(knapp);
+                }
+            }
         }
     }
+}
 
 
